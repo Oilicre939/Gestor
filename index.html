@@ -1,0 +1,1703 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ercílio Solutions - Gestão Financeira</title>
+    <style>
+        /* CSS COMPLETO */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --personal: #8b5cf6;
+            --reinvest: #06b6d4;
+            --reserve: #f97316;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --card-bg: #ffffff;
+            --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+        }
+
+        body {
+            background-color: #f1f5f9;
+            color: var(--dark);
+            line-height: 1.5;
+            transition: background-color 0.3s;
+        }
+
+        body.dark-mode {
+            background-color: #0f172a;
+            color: #e2e8f0;
+            --card-bg: #1e293b;
+            --shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Cabeçalho */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .header-controls button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: background 0.3s;
+        }
+
+        .header-controls button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .current-date {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Dashboard */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--primary);
+        }
+
+        .stat-card:nth-child(2) {
+            border-left-color: var(--success);
+        }
+
+        .stat-card:nth-child(3) {
+            border-left-color: var(--warning);
+        }
+
+        .stat-card h3 {
+            font-size: 0.9rem;
+            color: var(--secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin: 8px 0;
+        }
+
+        .stat-trend {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .stat-trend.positive {
+            color: var(--success);
+        }
+
+        .stat-trend.negative {
+            color: var(--danger);
+        }
+
+        .stat-sub {
+            font-size: 0.85rem;
+            color: var(--secondary);
+            margin-top: 4px;
+        }
+
+        /* Divisão Financeira */
+        .allocation-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .allocation-card h3 {
+            margin-bottom: 16px;
+            font-size: 1.1rem;
+        }
+
+        .allocation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .allocation-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            border-radius: 8px;
+            background: var(--light);
+        }
+
+        .dark-mode .allocation-item {
+            background: #334155;
+        }
+
+        .allocation-item.personal {
+            border-left: 4px solid var(--personal);
+        }
+
+        .allocation-item.reinvest {
+            border-left: 4px solid var(--reinvest);
+        }
+
+        .allocation-item.reserve {
+            border-left: 4px solid var(--reserve);
+        }
+
+        .allocation-icon {
+            font-size: 2rem;
+        }
+
+        .allocation-content h4 {
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .allocation-percent {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 4px 0;
+        }
+
+        .allocation-amount {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        /* Ações */
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .action-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .action-card h3 {
+            margin-bottom: 16px;
+            font-size: 1.1rem;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .dark-mode .input-group input {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-color: #475569;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #475569;
+            transform: translateY(-1px);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+            transform: translateY(-1px);
+        }
+
+        .hint {
+            font-size: 0.85rem;
+            color: var(--secondary);
+            margin-top: 8px;
+        }
+
+        .withdrawal-info {
+            background: #fef3c7;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 12px;
+        }
+
+        .dark-mode .withdrawal-info {
+            background: #92400e;
+            color: #fef3c7;
+        }
+
+        /* Gráficos */
+        .charts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .chart-container {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .chart-container h3 {
+            margin-bottom: 16px;
+            font-size: 1.1rem;
+        }
+
+        .chart-container canvas {
+            width: 100% !important;
+            height: 250px !important;
+        }
+
+        /* Alertas */
+        .alerts-section {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .alerts-container {
+            margin-top: 16px;
+        }
+
+        .alert {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+
+        .alert.info {
+            background: #dbeafe;
+            border-left-color: var(--primary);
+            color: #1e40af;
+        }
+
+        .dark-mode .alert.info {
+            background: #1e3a8a;
+            color: #dbeafe;
+        }
+
+        .alert.warning {
+            background: #fef3c7;
+            border-left-color: var(--warning);
+            color: #92400e;
+        }
+
+        .dark-mode .alert.warning {
+            background: #92400e;
+            color: #fef3c7;
+        }
+
+        .alert.danger {
+            background: #fee2e2;
+            border-left-color: var(--danger);
+            color: #991b1b;
+        }
+
+        .dark-mode .alert.danger {
+            background: #991b1b;
+            color: #fee2e2;
+        }
+
+        .alert-icon {
+            font-size: 1.2rem;
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-title {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .alert-message {
+            font-size: 0.9rem;
+        }
+
+        /* Atividade Recente */
+        .recent-activity {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .activity-list {
+            margin-top: 16px;
+        }
+
+        .activity-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .dark-mode .activity-item {
+            border-bottom-color: #475569;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-desc {
+            flex: 1;
+        }
+
+        .activity-amount {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .activity-amount.positive {
+            color: var(--success);
+        }
+
+        .activity-amount.negative {
+            color: var(--danger);
+        }
+
+        .activity-time {
+            font-size: 0.8rem;
+            color: var(--secondary);
+            min-width: 60px;
+            text-align: right;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: var(--radius);
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        /* Rodapé */
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--secondary);
+            font-size: 0.9rem;
+            margin-top: auto;
+        }
+
+        .footer-note {
+            font-size: 0.8rem;
+            margin-top: 4px;
+            opacity: 0.7;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .container {
+                padding: 12px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .allocation-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .charts {
+                grid-template-columns: 1fr;
+            }
+            
+            .actions {
+                grid-template-columns: 1fr;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+            }
+            
+            .header-top {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.3rem;
+            }
+            
+            .stat-value {
+                font-size: 1.5rem;
+            }
+            
+            .chart-container {
+                padding: 12px;
+            }
+            
+            .modal-content {
+                padding: 16px;
+            }
+        }
+
+        /* Animação para notificações */
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Cabeçalho -->
+        <header>
+            <div class="header-top">
+                <h1>💰 Ercílio Solutions</h1>
+                <div class="header-controls">
+                    <button id="themeToggle" title="Alternar tema">🌙</button>
+                    <button id="exportBtn" title="Exportar dados">📤</button>
+                </div>
+            </div>
+            <div class="current-date">
+                <span id="currentDate"></span>
+                <span id="currentTime"></span>
+            </div>
+        </header>
+
+        <!-- Dashboard Principal -->
+        <main>
+            <!-- Métricas Principais -->
+            <section class="dashboard">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Caixa Atual</h3>
+                        <div class="stat-value" id="currentBalance">0 MT</div>
+                        <div class="stat-trend" id="balanceTrend">+0%</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3>Receita Hoje</h3>
+                        <div class="stat-value" id="todayRevenue">0 MT</div>
+                        <div class="stat-sub">Média diária: <span id="dailyAvg">0 MT</span></div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3>Total Mensal</h3>
+                        <div class="stat-value" id="monthlyTotal">0 MT</div>
+                        <div class="stat-sub">Após custos: <span id="afterCosts">0 MT</span></div>
+                    </div>
+                </div>
+
+                <!-- Divisão Financeira Automática -->
+                <div class="allocation-card">
+                    <h3>🧾 Divisão Automática do Dinheiro</h3>
+                    <div class="allocation-grid">
+                        <div class="allocation-item personal">
+                            <div class="allocation-icon">🧾</div>
+                            <div class="allocation-content">
+                                <h4>Uso Pessoal</h4>
+                                <div class="allocation-percent">40%</div>
+                                <div class="allocation-amount" id="personalAmount">0 MT</div>
+                            </div>
+                        </div>
+                        
+                        <div class="allocation-item reinvest">
+                            <div class="allocation-icon">🚀</div>
+                            <div class="allocation-content">
+                                <h4>Reinvestimento</h4>
+                                <div class="allocation-percent">40%</div>
+                                <div class="allocation-amount" id="reinvestAmount">0 MT</div>
+                            </div>
+                        </div>
+                        
+                        <div class="allocation-item reserve">
+                            <div class="allocation-icon">🛡️</div>
+                            <div class="allocation-content">
+                                <h4>Reserva Empresa</h4>
+                                <div class="allocation-percent">20%</div>
+                                <div class="allocation-amount" id="reserveAmount">0 MT</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Ações Rápidas -->
+            <section class="actions">
+                <!-- Registrar Faturamento -->
+                <div class="action-card">
+                    <h3>📊 Registrar Faturamento Diário</h3>
+                    <div class="input-group">
+                        <input type="number" id="revenueInput" placeholder="Valor faturado hoje (MT)" min="0">
+                        <button id="addRevenue" class="btn-primary">Registrar</button>
+                    </div>
+                    <p class="hint">Insira o valor faturado hoje para atualizar automaticamente o sistema</p>
+                </div>
+
+                <!-- Retirar Dinheiro -->
+                <div class="action-card">
+                    <h3>💸 Retirar Dinheiro</h3>
+                    <div class="input-group">
+                        <input type="number" id="withdrawalInput" placeholder="Valor a retirar (MT)" min="0">
+                        <button id="addWithdrawal" class="btn-warning">Retirar</button>
+                    </div>
+                    <div class="withdrawal-info">
+                        <p>💡 Pode retirar este mês: <span id="availableWithdrawal">0 MT</span></p>
+                        <p class="hint">Sistema avalia risco automaticamente antes da retirada</p>
+                    </div>
+                </div>
+
+                <!-- Custos Fixos -->
+                <div class="action-card">
+                    <h3>📋 Custos Fixos Mensais</h3>
+                    <div class="input-group">
+                        <input type="number" id="fixedCostInput" placeholder="Custo fixo mensal (MT)" min="0">
+                        <button id="setFixedCost" class="btn-secondary">Definir</button>
+                    </div>
+                    <p class="hint">Atual: <span id="currentFixedCost">0 MT</span> por mês</p>
+                </div>
+            </section>
+
+            <!-- Gráficos -->
+            <section class="charts">
+                <div class="chart-container">
+                    <h3>📈 Receita Diária (30 dias)</h3>
+                    <canvas id="revenueChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h3>💰 Caixa Acumulado</h3>
+                    <canvas id="balanceChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h3>📊 Divisão Financeira</h3>
+                    <canvas id="allocationChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h3>📅 Comparativo Mensal</h3>
+                    <canvas id="comparisonChart"></canvas>
+                </div>
+            </section>
+
+            <!-- Alertas -->
+            <section class="alerts-section">
+                <h3>⚠️ Alertas do Sistema</h3>
+                <div class="alerts-container" id="alertsContainer">
+                    <!-- Alertas gerados automaticamente -->
+                </div>
+            </section>
+
+            <!-- Atividade Recente -->
+            <section class="recent-activity">
+                <h3>📝 Atividade Recente</h3>
+                <div class="activity-list" id="activityList">
+                    <!-- Atividades geradas automaticamente -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Rodapé -->
+        <footer>
+            <p>© <span id="currentYear"></span> Ercílio Solutions | Sistema de Gestão Financeira</p>
+            <p class="footer-note">Dados armazenados localmente no seu navegador</p>
+        </footer>
+    </div>
+
+    <!-- Modal de Confirmação -->
+    <div id="confirmationModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Confirmar Retirada</h3>
+            <div class="risk-indicator" id="modalRiskIndicator">
+                <!-- Indicador de risco será inserido aqui -->
+            </div>
+            <p id="modalMessage"></p>
+            <div class="modal-actions">
+                <button id="modalCancel" class="btn-secondary">Cancelar</button>
+                <button id="modalConfirm" class="btn-primary">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        // ========== STORAGE.JS ==========
+        class StorageManager {
+            constructor() {
+                this.STORAGE_KEY = 'ercilio_finance_v2';
+                this.initializeData();
+            }
+
+            initializeData() {
+                if (!this.getData()) {
+                    const initialData = {
+                        revenues: [],
+                        withdrawals: [],
+                        fixedCost: 2000,
+                        settings: {
+                            darkMode: false,
+                            currency: 'MT',
+                            allocation: {
+                                personal: 0.4,
+                                reinvest: 0.4,
+                                reserve: 0.2
+                            },
+                            riskThresholds: {
+                                safe: 0.3,
+                                attention: 0.6
+                            },
+                            minReserve: 5000
+                        }
+                    };
+                    this.saveData(initialData);
+                }
+            }
+
+            getData() {
+                const data = localStorage.getItem(this.STORAGE_KEY);
+                return data ? JSON.parse(data) : null;
+            }
+
+            saveData(data) {
+                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+            }
+
+            addRevenue(amount) {
+                const data = this.getData();
+                const revenue = {
+                    id: Date.now(),
+                    amount: parseFloat(amount),
+                    date: new Date().toISOString(),
+                    type: 'revenue'
+                };
+                data.revenues.push(revenue);
+                this.saveData(data);
+                return revenue;
+            }
+
+            addWithdrawal(amount, riskLevel) {
+                const data = this.getData();
+                const withdrawal = {
+                    id: Date.now(),
+                    amount: parseFloat(amount),
+                    date: new Date().toISOString(),
+                    type: 'withdrawal',
+                    riskLevel: riskLevel
+                };
+                data.withdrawals.push(withdrawal);
+                this.saveData(data);
+                return withdrawal;
+            }
+
+            setFixedCost(amount) {
+                const data = this.getData();
+                data.fixedCost = parseFloat(amount);
+                this.saveData(data);
+                return amount;
+            }
+
+            getMonthlyRevenues() {
+                const data = this.getData();
+                const now = new Date();
+                return data.revenues.filter(revenue => {
+                    const revenueDate = new Date(revenue.date);
+                    return revenueDate.getMonth() === now.getMonth() && 
+                           revenueDate.getFullYear() === now.getFullYear();
+                });
+            }
+
+            getMonthlyWithdrawals() {
+                const data = this.getData();
+                const now = new Date();
+                return data.withdrawals.filter(withdrawal => {
+                    const withdrawalDate = new Date(withdrawal.date);
+                    return withdrawalDate.getMonth() === now.getMonth() && 
+                           withdrawalDate.getFullYear() === now.getFullYear();
+                });
+            }
+
+            calculateCurrentBalance() {
+                const data = this.getData();
+                const totalRevenue = data.revenues.reduce((sum, r) => sum + r.amount, 0);
+                const totalWithdrawal = data.withdrawals.reduce((sum, w) => sum + w.amount, 0);
+                return totalRevenue - totalWithdrawal;
+            }
+
+            calculateAllocation(balance) {
+                const data = this.getData();
+                const allocation = data.settings.allocation;
+                
+                return {
+                    personal: balance * allocation.personal,
+                    reinvest: balance * allocation.reinvest,
+                    reserve: balance * allocation.reserve
+                };
+            }
+
+            getChartData(days = 30) {
+                const data = this.getData();
+                const result = {
+                    labels: [],
+                    revenues: [],
+                    balances: [],
+                    withdrawals: []
+                };
+
+                for (let i = days - 1; i >= 0; i--) {
+                    const date = new Date();
+                    date.setDate(date.getDate() - i);
+                    const dateStr = date.toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit' });
+                    result.labels.push(dateStr);
+
+                    // Receitas do dia
+                    const dayRevenues = data.revenues.filter(r => {
+                        const rDate = new Date(r.date);
+                        return rDate.toDateString() === date.toDateString();
+                    });
+                    const dailyRevenue = dayRevenues.reduce((sum, r) => sum + r.amount, 0);
+                    result.revenues.push(dailyRevenue);
+
+                    // Retiradas do dia
+                    const dayWithdrawals = data.withdrawals.filter(w => {
+                        const wDate = new Date(w.date);
+                        return wDate.toDateString() === date.toDateString();
+                    });
+                    const dailyWithdrawal = dayWithdrawals.reduce((sum, w) => sum + w.amount, 0);
+                    result.withdrawals.push(dailyWithdrawal);
+
+                    // Saldo acumulado até esta data
+                    const revenuesUntilDate = data.revenues.filter(r => {
+                        const rDate = new Date(r.date);
+                        return rDate <= date;
+                    });
+                    const withdrawalsUntilDate = data.withdrawals.filter(w => {
+                        const wDate = new Date(w.date);
+                        return wDate <= date;
+                    });
+                    const balanceUntilDate = revenuesUntilDate.reduce((sum, r) => sum + r.amount, 0) -
+                                           withdrawalsUntilDate.reduce((sum, w) => sum + w.amount, 0);
+                    result.balances.push(balanceUntilDate);
+                }
+
+                return result;
+            }
+
+            getMonthlyComparisonData() {
+                const data = this.getData();
+                const result = {
+                    labels: [],
+                    revenues: [],
+                    profits: []
+                };
+
+                const now = new Date();
+                for (let i = 5; i >= 0; i--) {
+                    const month = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                    const monthStr = month.toLocaleDateString('pt-PT', { month: 'short' });
+                    result.labels.push(monthStr);
+
+                    const monthRevenues = data.revenues.filter(r => {
+                        const rDate = new Date(r.date);
+                        return rDate.getMonth() === month.getMonth() && 
+                               rDate.getFullYear() === month.getFullYear();
+                    });
+                    const monthRevenue = monthRevenues.reduce((sum, r) => sum + r.amount, 0);
+                    result.revenues.push(monthRevenue);
+
+                    const monthWithdrawals = data.withdrawals.filter(w => {
+                        const wDate = new Date(w.date);
+                        return wDate.getMonth() === month.getMonth() && 
+                               wDate.getFullYear() === month.getFullYear();
+                    });
+                    const monthWithdrawal = monthWithdrawals.reduce((sum, w) => sum + w.amount, 0);
+                    const profit = monthRevenue - monthWithdrawal - data.fixedCost;
+                    result.profits.push(Math.max(0, profit));
+                }
+
+                return result;
+            }
+
+            exportData() {
+                const data = this.getData();
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `ercilio_finance_${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        // ========== FINANCE.JS ==========
+        class FinanceManager {
+            constructor(storage) {
+                this.storage = storage;
+                this.settings = storage.getData().settings;
+            }
+
+            calculateAllMetrics() {
+                const data = this.storage.getData();
+                const currentBalance = this.storage.calculateCurrentBalance();
+                const allocation = this.storage.calculateAllocation(currentBalance);
+                
+                const monthlyRevenues = this.storage.getMonthlyRevenues();
+                const monthlyWithdrawals = this.storage.getMonthlyWithdrawals();
+                
+                const totalMonthlyRevenue = monthlyRevenues.reduce((sum, r) => sum + r.amount, 0);
+                const totalMonthlyWithdrawal = monthlyWithdrawals.reduce((sum, w) => sum + w.amount, 0);
+                
+                const dailyAvg = this.calculateDailyAverage();
+                const trend = this.calculateMonthlyTrend();
+                const profitAfterCosts = totalMonthlyRevenue - totalMonthlyWithdrawal - data.fixedCost;
+                const availableForWithdrawal = Math.max(0, profitAfterCosts * 0.4);
+                
+                return {
+                    currentBalance,
+                    totalMonthlyRevenue,
+                    totalMonthlyWithdrawal,
+                    dailyAvg,
+                    trend,
+                    profitAfterCosts,
+                    availableForWithdrawal,
+                    allocation
+                };
+            }
+
+            calculateDailyAverage() {
+                const chartData = this.storage.getChartData(30);
+                const daysWithRevenue = chartData.revenues.filter(r => r > 0).length;
+                const totalRevenue = chartData.revenues.reduce((sum, r) => sum + r, 0);
+                
+                return daysWithRevenue > 0 ? totalRevenue / daysWithRevenue : 0;
+            }
+
+            calculateMonthlyTrend() {
+                const now = new Date();
+                const currentMonthRevenues = this.storage.getMonthlyRevenues();
+                const currentTotal = currentMonthRevenues.reduce((sum, r) => sum + r.amount, 0);
+                
+                const previousMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+                const data = this.storage.getData();
+                const previousRevenues = data.revenues.filter(r => {
+                    const rDate = new Date(r.date);
+                    return rDate.getMonth() === previousMonth.getMonth() && 
+                           rDate.getFullYear() === previousMonth.getFullYear();
+                });
+                const previousTotal = previousRevenues.reduce((sum, r) => sum + r.amount, 0);
+                
+                if (previousTotal === 0) return currentTotal > 0 ? 100 : 0;
+                
+                return ((currentTotal - previousTotal) / previousTotal) * 100;
+            }
+
+            evaluateWithdrawalRisk(amount) {
+                const metrics = this.calculateAllMetrics();
+                const available = metrics.availableForWithdrawal;
+                
+                if (amount <= 0) {
+                    return { level: 'invalid', message: 'Valor inválido' };
+                }
+                
+                if (amount > available) {
+                    return {
+                        level: 'danger',
+                        message: `⚠️ ALTO RISCO: Valor excede o disponível para retirada este mês (${available.toLocaleString('pt-PT')} MT)`,
+                        color: 'danger'
+                    };
+                }
+                
+                const ratio = amount / available;
+                
+                if (ratio <= 0.3) {
+                    return {
+                        level: 'safe',
+                        message: '✅ SEGURO: Retirada dentro dos limites seguros',
+                        color: 'success'
+                    };
+                } else if (ratio <= 0.6) {
+                    return {
+                        level: 'attention',
+                        message: '⚠️ ATENÇÃO: Retirada próxima do limite recomendado',
+                        color: 'warning'
+                    };
+                } else {
+                    return {
+                        level: 'danger',
+                        message: '🚨 PERIGO: Retirada acima do limite seguro',
+                        color: 'danger'
+                    };
+                }
+            }
+
+            generateAlerts() {
+                const alerts = [];
+                const metrics = this.calculateAllMetrics();
+                const data = this.storage.getData();
+                
+                if (metrics.currentBalance < data.settings.minReserve) {
+                    alerts.push({
+                        type: 'danger',
+                        title: 'Caixa Baixo',
+                        message: `Saldo atual (${metrics.currentBalance.toLocaleString('pt-PT')} MT) está abaixo do mínimo recomendado`,
+                        icon: '💰'
+                    });
+                }
+                
+                const monthlyWithdrawals = this.storage.getMonthlyWithdrawals();
+                const withdrawalCount = monthlyWithdrawals.length;
+                if (withdrawalCount > 10) {
+                    alerts.push({
+                        type: 'warning',
+                        title: 'Muitas Retiradas',
+                        message: `${withdrawalCount} retiradas este mês. Considere reduzir a frequência.`,
+                        icon: '💸'
+                    });
+                }
+                
+                if (metrics.trend < -20) {
+                    alerts.push({
+                        type: 'warning',
+                        title: 'Queda no Faturamento',
+                        message: `Faturamento ${Math.abs(metrics.trend).toFixed(0)}% menor que mês anterior`,
+                        icon: '📉'
+                    });
+                }
+                
+                if (metrics.allocation.reserve < data.settings.minReserve) {
+                    alerts.push({
+                        type: 'info',
+                        title: 'Reserva Insuficiente',
+                        message: `Reserva atual (${metrics.allocation.reserve.toLocaleString('pt-PT')} MT) está abaixo do mínimo recomendado`,
+                        icon: '🛡️'
+                    });
+                }
+                
+                if (metrics.totalMonthlyRevenue > 0 && 
+                    metrics.totalMonthlyRevenue < data.fixedCost * 1.5) {
+                    alerts.push({
+                        type: 'warning',
+                        title: 'Custo Fixo Alto',
+                        message: `Faturamento está apenas ${Math.round((metrics.totalMonthlyRevenue / data.fixedCost) * 100)}% acima dos custos fixos`,
+                        icon: '📋'
+                    });
+                }
+                
+                return alerts;
+            }
+        }
+
+        // ========== CHARTS.JS ==========
+        class ChartManager {
+            constructor() {
+                this.charts = {};
+                this.colors = {
+                    revenue: 'rgba(37, 99, 235, 0.8)',
+                    balance: 'rgba(16, 185, 129, 0.8)',
+                    personal: 'rgba(139, 92, 246, 0.8)',
+                    reinvest: 'rgba(6, 182, 212, 0.8)',
+                    reserve: 'rgba(249, 115, 22, 0.8)'
+                };
+            }
+
+            initializeCharts(storage) {
+                this.destroyAllCharts();
+                this.createRevenueChart(storage);
+                this.createBalanceChart(storage);
+                this.createAllocationChart(storage);
+                this.createComparisonChart(storage);
+            }
+
+            createRevenueChart(storage) {
+                const ctx = document.getElementById('revenueChart').getContext('2d');
+                const chartData = storage.getChartData(30);
+                
+                this.charts.revenue = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: chartData.labels,
+                        datasets: [{
+                            label: 'Receita Diária',
+                            data: chartData.revenues,
+                            borderColor: this.colors.revenue,
+                            backgroundColor: this.colors.revenue.replace('0.8', '0.1'),
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: this.getChartOptions('Receita Diária (MT)')
+                });
+            }
+
+            createBalanceChart(storage) {
+                const ctx = document.getElementById('balanceChart').getContext('2d');
+                const chartData = storage.getChartData(30);
+                
+                this.charts.balance = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: chartData.labels,
+                        datasets: [{
+                            label: 'Caixa Acumulado',
+                            data: chartData.balances,
+                            borderColor: this.colors.balance,
+                            backgroundColor: this.colors.balance.replace('0.8', '0.1'),
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: this.getChartOptions('Caixa Acumulado (MT)')
+                });
+            }
+
+            createAllocationChart(storage) {
+                const ctx = document.getElementById('allocationChart').getContext('2d');
+                const balance = storage.calculateCurrentBalance();
+                const allocation = storage.calculateAllocation(balance);
+                
+                this.charts.allocation = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Uso Pessoal', 'Reinvestimento', 'Reserva'],
+                        datasets: [{
+                            data: [allocation.personal, allocation.reinvest, allocation.reserve],
+                            backgroundColor: [
+                                this.colors.personal,
+                                this.colors.reinvest,
+                                this.colors.reserve
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom' },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const value = context.raw;
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = Math.round((value / total) * 100);
+                                        return `${context.label}: ${value.toLocaleString('pt-PT')} MT (${percentage}%)`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            createComparisonChart(storage) {
+                const ctx = document.getElementById('comparisonChart').getContext('2d');
+                const chartData = storage.getMonthlyComparisonData();
+                
+                this.charts.comparison = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: chartData.labels,
+                        datasets: [
+                            {
+                                label: 'Receitas',
+                                data: chartData.revenues,
+                                backgroundColor: this.colors.revenue
+                            },
+                            {
+                                label: 'Lucros',
+                                data: chartData.profits,
+                                backgroundColor: this.colors.balance
+                            }
+                        ]
+                    },
+                    options: this.getChartOptions('Comparativo Mensal (MT)', 'bar')
+                });
+            }
+
+            getChartOptions(title, type = 'line') {
+                const isDark = document.body.classList.contains('dark-mode');
+                const textColor = isDark ? '#e2e8f0' : '#1e293b';
+                const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+                
+                return {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: textColor }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.raw.toLocaleString('pt-PT')} MT`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: gridColor },
+                            ticks: {
+                                color: textColor,
+                                maxRotation: 45
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: gridColor },
+                            ticks: {
+                                color: textColor,
+                                callback: function(value) {
+                                    return value.toLocaleString('pt-PT') + ' MT';
+                                }
+                            }
+                        }
+                    }
+                };
+            }
+
+            destroyAllCharts() {
+                Object.values(this.charts).forEach(chart => {
+                    if (chart) chart.destroy();
+                });
+                this.charts = {};
+            }
+
+            updateTheme() {
+                Object.values(this.charts).forEach(chart => {
+                    if (chart) {
+                        const isDark = document.body.classList.contains('dark-mode');
+                        const textColor = isDark ? '#e2e8f0' : '#1e293b';
+                        const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+                        
+                        chart.options.scales.x.grid.color = gridColor;
+                        chart.options.scales.y.grid.color = gridColor;
+                        chart.options.scales.x.ticks.color = textColor;
+                        chart.options.scales.y.ticks.color = textColor;
+                        chart.options.plugins.legend.labels.color = textColor;
+                        
+                        chart.update();
+                    }
+                });
+            }
+        }
+
+        // ========== APP.JS ==========
+        class FinanceApp {
+            constructor() {
+                this.storage = new StorageManager();
+                this.finance = new FinanceManager(this.storage);
+                this.charts = new ChartManager();
+                this.initializeApp();
+                this.setupEventListeners();
+            }
+
+            initializeApp() {
+                this.updateDateTime();
+                setInterval(() => this.updateDateTime(), 60000);
+                this.updateUI();
+                setInterval(() => this.updateUI(), 30000);
+            }
+
+            updateDateTime() {
+                const now = new Date();
+                const dateStr = now.toLocaleDateString('pt-PT', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                
+                const timeStr = now.toLocaleTimeString('pt-PT', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                document.getElementById('currentDate').textContent = dateStr;
+                document.getElementById('currentTime').textContent = timeStr;
+                document.getElementById('currentYear').textContent = now.getFullYear();
+            }
+
+            updateUI() {
+                const metrics = this.finance.calculateAllMetrics();
+                
+                document.getElementById('currentBalance').textContent = 
+                    `${metrics.currentBalance.toLocaleString('pt-PT')} MT`;
+                
+                document.getElementById('todayRevenue').textContent = 
+                    `${metrics.totalMonthlyRevenue.toLocaleString('pt-PT')} MT`;
+                
+                document.getElementById('dailyAvg').textContent = 
+                    `${metrics.dailyAvg.toLocaleString('pt-PT', { maximumFractionDigits: 0 })} MT`;
+                
+                document.getElementById('monthlyTotal').textContent = 
+                    `${metrics.totalMonthlyRevenue.toLocaleString('pt-PT')} MT`;
+                
+                document.getElementById('afterCosts').textContent = 
+                    `${metrics.profitAfterCosts.toLocaleString('pt-PT')} MT`;
+                
+                const trendElement = document.getElementById('balanceTrend');
+                trendElement.textContent = `${metrics.trend > 0 ? '+' : ''}${metrics.trend.toFixed(1)}%`;
+                trendElement.className = `stat-trend ${metrics.trend >= 0 ? 'positive' : 'negative'}`;
+                
+                document.getElementById('personalAmount').textContent = 
+                    `${metrics.allocation.personal.toLocaleString('pt-PT')} MT`;
+                
+                document.getElementById('reinvestAmount').textContent = 
+                    `${metrics.allocation.reinvest.toLocaleString('pt-PT')} MT`;
+                
+                document.getElementById('reserveAmount').textContent = 
+                    `${metrics.allocation.reserve.toLocaleString('pt-PT')} MT`;
+                
+                document.getElementById('availableWithdrawal').textContent = 
+                    `${metrics.availableForWithdrawal.toLocaleString('pt-PT')} MT`;
+                
+                const data = this.storage.getData();
+                document.getElementById('currentFixedCost').textContent = 
+                    `${data.fixedCost.toLocaleString('pt-PT')} MT`;
+                
+                this.updateAlerts();
+                this.updateRecentActivity();
+                this.charts.initializeCharts(this.storage);
+            }
+
+            updateAlerts() {
+                const alerts = this.finance.generateAlerts();
+                const container = document.getElementById('alertsContainer');
+                container.innerHTML = '';
+                
+                if (alerts.length === 0) {
+                    container.innerHTML = `
+                        <div class="alert info">
+                            <div class="alert-icon">✅</div>
+                            <div class="alert-content">
+                                <div class="alert-title">Tudo em Ordem</div>
+                                <div class="alert-message">Nenhum alerta crítico no momento.</div>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                alerts.forEach(alert => {
+                    const alertEl = document.createElement('div');
+                    alertEl.className = `alert ${alert.type}`;
+                    alertEl.innerHTML = `
+                        <div class="alert-icon">${alert.icon}</div>
+                        <div class="alert-content">
+                            <div class="alert-title">${alert.title}</div>
+                            <div class="alert-message">${alert.message}</div>
+                        </div>
+                    `;
+                    container.appendChild(alertEl);
+                });
+            }
+
+            updateRecentActivity() {
+                const data = this.storage.getData();
+                const allActivities = [...data.revenues, ...data.withdrawals]
+                    .sort((a, b) => new Date(b.date) - new Date(a.date))
+                    .slice(0, 8);
+                
+                const container = document.getElementById('activityList');
+                container.innerHTML = '';
+                
+                if (allActivities.length === 0) {
+                    container.innerHTML = `
+                        <div class="activity-item">
+                            <div class="activity-desc">Nenhuma atividade registrada ainda</div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                allActivities.forEach(activity => {
+                    const item = document.createElement('div');
+                    item.className = 'activity-item';
+                    
+                    const isRevenue = activity.type === 'revenue';
+                    const amount = activity.amount.toLocaleString('pt-PT', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                    
+                    const time = new Date(activity.date).toLocaleTimeString('pt-PT', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    item.innerHTML = `
+                        <div class="activity-desc">
+                            ${isRevenue ? '💰 Faturamento registrado' : '💸 Retirada efetuada'}
+                        </div>
+                        <div class="activity-amount ${isRevenue ? 'positive' : 'negative'}">
+                            ${isRevenue ? '+' : '-'} ${amount} MT
+                        </div>
+                        <div class="activity-time">${time}</div>
+                    `;
+                    
+                    container.appendChild(item);
+                });
+            }
+
+            setupEventListeners() {
+                // Registrar faturamento
+                document.getElementById('addRevenue').addEventListener('click', () => {
+                    const input = document.getElementById('revenueInput');
+                    const amount = parseFloat(input.value);
+                    
+                    if (!amount || amount <= 0) {
+                        this.showNotification('Insira um valor válido para faturamento', 'warning');
+                        return;
+                    }
+                    
+                    this.storage.addRevenue(amount);
+                    input.value = '';
+                    this.updateUI();
+                    this.showNotification(`Faturamento de ${amount.toLocaleString('pt-PT')} MT registrado`, 'success');
+                });
+                
+                // Retirar dinheiro
+                document.getElementById('addWithdrawal').addEventListener('click', async () => {
+                    const input = document.getElementById('withdrawalInput');
+                    const amount = parseFloat(input.value);
+                    
+                    if (!amount || amount <= 0) {
+                        this.showNotification('Insira um valor válido para retirada', 'warning');
+                        return;
+                    }
+                    
+                    const risk = this.finance.evaluateWithdrawalRisk(amount);
+                    
+                    if (risk.level === 'invalid') {
+                        this.showNotification('Valor de retirada inválido', 'danger');
+                        return;
+                    }
+                    
+                    const confirmed = await this.showConfirmationModal(risk, amount);
+                    
+                    if (confirmed) {
+                        this.storage.addWithdrawal(amount, risk.level);
+                        input.value = '';
+                        this.updateUI();
+                        this.showNotification(`Retirada de ${amount.toLocaleString('pt-PT')} MT realizada`, 'info');
+                    }
+                });
+                
+                // Definir custo fixo
+                document.getElementById('setFixedCost').addEventListener('click', () => {
+                    const input = document.getElementById('fixedCostInput');
+                    const amount = parseFloat(input.value);
+                    
+                    if (!amount || amount < 0) {
+                        this.showNotification('Insira um valor válido para custos fixos', 'warning');
+                        return;
+                    }
+                    
+                    this.storage.setFixedCost(amount);
+                    input.value = '';
+                    this.updateUI();
+                    this.showNotification(`Custo fixo definido para ${amount.toLocaleString('pt-PT')} MT/mês`, 'success');
+                });
+                
+                // Alternar tema
+                document.getElementById('themeToggle').addEventListener('click', () => {
+                    document.body.classList.toggle('dark-mode');
+                    const toggleBtn = document.getElementById('themeToggle');
+                    toggleBtn.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+                    this.charts.updateTheme();
+                    
+                    const data = this.storage.getData();
+                    data.settings.darkMode = document.body.classList.contains('dark-mode');
+                    this.storage.saveData(data);
+                });
+                
+                // Exportar dados
+                document.getElementById('exportBtn').addEventListener('click', () => {
+                    this.storage.exportData();
+                    this.showNotification('Dados exportados com sucesso', 'success');
+                });
+                
+                // Permitir Enter nos inputs
+                ['revenueInput', 'withdrawalInput', 'fixedCostInput'].forEach(id => {
+                    document.getElementById(id).addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') {
+                            const btnId = id.replace('Input', '');
+                            const btn = document.getElementById(
+                                btnId === 'fixedCost' ? 'setFixedCost' : `add${btnId.charAt(0).toUpperCase() + btnId.slice(1)}`
+                            );
+                            btn.click();
+                        }
+                    });
+                });
+                
+                // Carregar tema salvo
+                const data = this.storage.getData();
+                if (data.settings.darkMode) {
+                    document.body.classList.add('dark-mode');
+                    document.getElementById('themeToggle').textContent = '☀️';
+                }
+            }
+
+            async showConfirmationModal(risk, amount) {
+                return new Promise((resolve) => {
+                    const modal = document.getElementById('confirmationModal');
+                    const modalTitle = document.getElementById('modalTitle');
+                    const modalMessage = document.getElementById('modalMessage');
+                    const riskIndicator = document.getElementById('modalRiskIndicator');
+                    const modalConfirm = document.getElementById('modalConfirm');
+                    const modalCancel = document.getElementById('modalCancel');
+                    
+                    modalTitle.textContent = `Confirmar Retirada - ${risk.level === 'safe' ? '✅ Seguro' : risk.level === 'attention' ? '⚠️ Atenção' : '🚨 Alto Risco'}`;
+                    modalMessage.textContent = `Retirar ${amount.toLocaleString('pt-PT')} MT?\n\n${risk.message}`;
+                    
+                    riskIndicator.innerHTML = `
+                        <div class="risk-level ${risk.level}" style="margin: 15px 0;">
+                            <div class="risk-bar" style="height: 10px; background: #e2e8f0; border-radius: 5px; overflow: hidden;">
+                                <div class="risk-fill ${risk.level}" style="height: 100%; width: ${risk.level === 'safe' ? '30%' : risk.level === 'attention' ? '60%' : '90%'}; background: ${risk.color === 'success' ? '#10b981' : risk.color === 'warning' ? '#f59e0b' : '#ef4444'};"></div>
+                            </div>
+                            <span style="display: block; text-align: center; margin-top: 5px; font-weight: bold; color: ${risk.color === 'success' ? '#10b981' : risk.color === 'warning' ? '#f59e0b' : '#ef4444'};">${risk.level === 'safe' ? 'SEGURO' : risk.level === 'attention' ? 'ATENÇÃO' : 'ALTO RISCO'}</span>
+                        </div>
+                    `;
+                    
+                    modalConfirm.className = `btn-${risk.color}`;
+                    modalConfirm.textContent = risk.level === 'danger' ? '⚠️ Confirmar' : '✅ Confirmar';
+                    
+                    modal.classList.add('active');
+                    
+                    const confirmHandler = () => {
+                        cleanup();
+                        resolve(true);
+                    };
+                    
+                    const cancelHandler = () => {
+                        cleanup();
+                        resolve(false);
+                    };
+                    
+                    const cleanup = () => {
+                        modal.classList.remove('active');
+                        modalConfirm.removeEventListener('click', confirmHandler);
+                        modalCancel.removeEventListener('click', cancelHandler);
+                    };
+                    
+                    modalConfirm.addEventListener('click', confirmHandler);
+                    modalCancel.addEventListener('click', cancelHandler);
+                });
+            }
+
+            showNotification(message, type = 'info') {
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.innerHTML = `
+                    <div class="notification-icon">
+                        ${type === 'success' ? '✅' : type === 'warning' ? '⚠️' : type === 'danger' ? '❌' : 'ℹ️'}
+                    </div>
+                    <div class="notification-message">${message}</div>
+                `;
+                
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: ${type === 'success' ? '#10b981' : 
+                                type === 'warning' ? '#f59e0b' : 
+                                type === 'danger' ? '#ef4444' : '#2563eb'};
+                    color: white;
+                    padding: 12px 16px;
+                    border-radius: 8px;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    z-index: 1000;
+                    animation: slideIn 0.3s ease;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                `;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 300);
+                }, 3000);
+            }
+        }
+
+        // ========== INICIALIZAR APLICAÇÃO ==========
+        document.addEventListener('DOMContentLoaded', () => {
+            window.app = new FinanceApp();
+        });
+    </script>
+</body>
+</html>
